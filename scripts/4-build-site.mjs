@@ -53,6 +53,15 @@ await mkdir(DIST, { recursive: true });
 await writeFile(path.join(DIST, 'index.html'), standalone, 'utf8');
 await writeFile(path.join(DIST, 'artifact.html'), body, 'utf8');
 
+// docs/ is what GitHub Pages serves, so unlike dist/ it is committed. The
+// token available here has no `workflow` scope, which rules out building on
+// Actions — the built page has to be in the tree.
+const DOCS = path.join(ROOT, 'docs');
+await mkdir(DOCS, { recursive: true });
+await writeFile(path.join(DOCS, 'index.html'), standalone, 'utf8');
+await writeFile(path.join(DOCS, '.nojekyll'), '', 'utf8');
+
 const kb = (s) => `${(Buffer.byteLength(s) / 1024).toFixed(1)} kB`;
 console.log(`\ndist/index.html     ${kb(standalone)}  (open from disk)`);
-console.log(`dist/artifact.html  ${kb(body)}  (publish this one)`);
+console.log(`dist/artifact.html  ${kb(body)}  (publish as an Artifact)`);
+console.log(`docs/index.html     ${kb(standalone)}  (served by GitHub Pages)`);
