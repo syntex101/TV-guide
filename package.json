@@ -1,0 +1,14 @@
+{
+  "name": "living-room-safe",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Is this episode safe to watch in the living room?",
+  "scripts": {
+    "fetch:episodes": "node scripts/1-fetch-episodes.mjs",
+    "fetch:guides": "node scripts/2-fetch-guides.mjs",
+    "build:data": "node scripts/3-build-dataset.mjs",
+    "build": "node scripts/4-build-site.mjs",
+    "all": "npm run fetch:episodes && npm run fetch:guides && npm run build:data && npm run build"
+  }
+}

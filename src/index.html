@@ -1,0 +1,607 @@
+<title>Safe for the Living Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Big+Shoulders+Display:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* ── Tokens: light is the base set; both dark paths override only these ── */
+:root {
+  --ground:    #E7E9EC;
+  --surface:   #FDFDFC;
+  --sunken:    #DCE0E5;
+  --ink:       #15191F;
+  --ink-soft:  #4C555F;
+  --ink-faint: #7B838D;
+  --rule:      #C3C9D1;
+
+  --accent:    #0F6470;
+  --safe:      #46801F;
+  --caution:   #9A6310;
+  --unsafe:    #A32A28;
+  --unknown:   #646C77;
+
+  --safe-wash:    #E6EFDD;
+  --caution-wash: #F6EBD8;
+  --unsafe-wash:  #F5E1E0;
+  --unknown-wash: #E2E5E9;
+
+  --shadow: 0 1px 2px rgb(21 25 31 / .07), 0 8px 24px -12px rgb(21 25 31 / .22);
+
+  --step--1: clamp(.75rem, .72rem + .12vw, .8rem);
+  --step-0:  clamp(.94rem, .9rem + .18vw, 1rem);
+  --step-1:  clamp(1.1rem, 1rem + .4vw, 1.25rem);
+  --step-2:  clamp(1.5rem, 1.3rem + .9vw, 2rem);
+  --step-3:  clamp(2.4rem, 1.9rem + 2.2vw, 3.6rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:    #0E1218;
+    --surface:   #171C24;
+    --sunken:    #10151C;
+    --ink:       #E8EBEF;
+    --ink-soft:  #A7B0BB;
+    --ink-faint: #79828E;
+    --rule:      #2C343F;
+
+    --accent:    #57B6C2;
+    --safe:      #86C853;
+    --caution:   #E4A63F;
+    --unsafe:    #F0736A;
+    --unknown:   #8B939F;
+
+    --safe-wash:    #1B2A16;
+    --caution-wash: #2E2413;
+    --unsafe-wash:  #2E1917;
+    --unknown-wash: #1D232B;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / .5), 0 10px 30px -14px rgb(0 0 0 / .8);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:    #0E1218;
+  --surface:   #171C24;
+  --sunken:    #10151C;
+  --ink:       #E8EBEF;
+  --ink-soft:  #A7B0BB;
+  --ink-faint: #79828E;
+  --rule:      #2C343F;
+
+  --accent:    #57B6C2;
+  --safe:      #86C853;
+  --caution:   #E4A63F;
+  --unsafe:    #F0736A;
+  --unknown:   #8B939F;
+
+  --safe-wash:    #1B2A16;
+  --caution-wash: #2E2413;
+  --unsafe-wash:  #2E1917;
+  --unknown-wash: #1D232B;
+
+  --shadow: 0 1px 2px rgb(0 0 0 / .5), 0 10px 30px -14px rgb(0 0 0 / .8);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--step-0);
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+.page {
+  max-width: 37rem;
+  margin-inline: auto;
+  padding: clamp(1rem, .6rem + 1.6vw, 2rem) clamp(1rem, .7rem + 1.2vw, 1.5rem) 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* Condensed signage face carries every label, eyebrow and number badge */
+.label {
+  font-family: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  line-height: 1;
+}
+
+/* ── Masthead ─────────────────────────────────────────────────────── */
+.masthead { display: flex; flex-direction: column; gap: .5rem; }
+.masthead .eyebrow {
+  font-size: var(--step--1);
+  color: var(--accent);
+  display: flex; align-items: center; gap: .6rem;
+}
+.masthead .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+.masthead h1 {
+  font-family: "Bodoni Moda", Georgia, serif;
+  font-weight: 700;
+  font-size: var(--step-2);
+  line-height: 1.05;
+  margin: 0;
+  text-wrap: balance;
+}
+.masthead p { margin: 0; color: var(--ink-soft); font-size: var(--step--1); max-width: 46ch; }
+
+/* ── Picker ───────────────────────────────────────────────────────── */
+.picker {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 1rem;
+  display: grid;
+  gap: .75rem;
+  grid-template-columns: 1fr 1fr;
+}
+.picker .field { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.picker .field.wide { grid-column: 1 / -1; }
+.picker label { font-size: .68rem; color: var(--ink-faint); }
+.picker select, .picker input {
+  font: inherit;
+  font-size: var(--step-0);
+  color: var(--ink);
+  background: var(--sunken);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: .6rem .65rem;
+  min-height: 2.9rem;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+.picker select { appearance: none; cursor: pointer; }
+.picker input::placeholder { color: var(--ink-faint); }
+:where(select, input, button, a):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Verdict placard: the answer, readable across a dim room ─────── */
+.placard {
+  --tone: var(--unknown);
+  --tone-wash: var(--unknown-wash);
+  background: var(--tone-wash);
+  border: 2px solid var(--tone);
+  border-radius: 3px;
+  padding: 1.5rem 1.25rem 1.25rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+  position: relative;
+}
+/* Inner hairline — the double rule of a period lobby certificate */
+.placard::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--tone);
+  opacity: .35;
+  border-radius: 1px;
+  pointer-events: none;
+}
+.placard[data-tier="green"]   { --tone: var(--safe);    --tone-wash: var(--safe-wash); }
+.placard[data-tier="amber"]   { --tone: var(--caution); --tone-wash: var(--caution-wash); }
+.placard[data-tier="red"]     { --tone: var(--unsafe);  --tone-wash: var(--unsafe-wash); }
+.placard[data-tier="unknown"] { --tone: var(--unknown); --tone-wash: var(--unknown-wash); }
+
+.placard .mark {
+  width: 4.25rem; height: 4.25rem;
+  margin: 0 auto .55rem;
+  display: grid; place-items: center;
+  border: 2px solid var(--tone);
+  border-radius: 50%;
+  color: var(--tone);
+}
+.placard .mark svg { width: 2.4rem; height: 2.4rem; display: block; }
+.placard .verdict {
+  font-family: "Bodoni Moda", Georgia, serif;
+  font-weight: 700;
+  font-size: var(--step-3);
+  line-height: 1;
+  letter-spacing: .01em;
+  text-transform: none;
+  color: var(--tone);
+  margin: 0;
+  text-wrap: balance;
+}
+.placard .tierline { font-size: var(--step--1); color: var(--tone); margin: .55rem 0 0; }
+.placard .divider {
+  height: 1px; background: var(--tone); opacity: .3;
+  margin: 1rem clamp(0rem, 6vw, 2.5rem);
+}
+.placard .epno { font-size: var(--step--1); color: var(--ink-soft); }
+.placard .eptitle {
+  font-family: "Bodoni Moda", Georgia, serif;
+  font-size: var(--step-1);
+  margin: .2rem 0 .35rem;
+  text-wrap: balance;
+}
+.placard .meta { font-size: var(--step--1); color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.placard .reason {
+  margin: .8rem auto 0;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  max-width: 42ch;
+}
+
+/* ── Scene detail, veiled because these are heavy plot spoilers ──── */
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: .4rem;
+  margin-bottom: .85rem;
+}
+.section-head h2 { font-size: var(--step--1); color: var(--accent); margin: 0; }
+.section-head .count { font-size: var(--step--1); color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+
+.scenes { display: flex; flex-direction: column; gap: .6rem; margin: 0; padding: 0; list-style: none; }
+.scenes li {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--tone);
+  border-radius: 2px;
+  padding: .7rem .85rem;
+  font-size: var(--step--1);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.scenes .stamp { font-variant-numeric: tabular-nums; color: var(--accent); margin-right: .5rem; }
+
+.spoilers { --tone: var(--unsafe); }
+.spoilers[data-tier="green"]   { --tone: var(--safe); }
+.spoilers[data-tier="amber"]   { --tone: var(--caution); }
+.spoilers[data-tier="unknown"] { --tone: var(--unknown); }
+
+.veil { position: relative; }
+.veil .scenes { filter: blur(6px); user-select: none; transition: filter .25s ease; }
+.veil .reveal {
+  position: absolute; inset: 0;
+  display: grid; place-content: center; justify-items: center; gap: .3rem;
+  background: color-mix(in srgb, var(--ground) 55%, transparent);
+  border: 1px dashed var(--rule);
+  border-radius: 2px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink);
+  width: 100%;
+}
+.veil .reveal .big { font-size: var(--step--1); }
+.veil .reveal .small {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 400;
+  font-size: .68rem;
+  color: var(--ink-faint);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.veil.open .scenes { filter: none; user-select: auto; }
+.veil.open .reveal { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .veil .scenes { transition: none; }
+}
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--rule);
+  border-radius: 2px;
+  padding: .85rem;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* ── Season grid: plan a night at a glance, and navigate ─────────── */
+.grid-scroll { overflow-x: auto; }
+.season { display: flex; align-items: center; gap: .5rem; margin-bottom: .3rem; }
+.season .sname { font-size: .68rem; color: var(--ink-faint); width: 1.5rem; flex: none; }
+.season .eps { display: grid; grid-template-columns: repeat(12, minmax(1.25rem, 1fr)); gap: .2rem; flex: 1; }
+
+.cell {
+  aspect-ratio: 1;
+  display: grid; place-items: center;
+  font-family: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  font-weight: 700;
+  font-size: .82rem;
+  font-variant-numeric: tabular-nums;
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+/* Fill pattern differs per tier as well as hue, so the grid still reads
+   without colour: solid, hatched, tinted-outline, dashed-empty. */
+.cell[data-tier="red"]     { background: var(--unsafe); border-color: var(--unsafe); color: var(--surface); }
+.cell[data-tier="amber"]   {
+  border-color: var(--caution); color: var(--ink);
+  background: repeating-linear-gradient(-45deg, var(--caution-wash) 0 4px, var(--caution) 4px 6px);
+}
+.cell[data-tier="green"]   { background: var(--safe-wash); border-color: var(--safe); color: var(--safe); }
+.cell[data-tier="unknown"] { background: transparent; border-style: dashed; border-color: var(--unknown); color: var(--unknown); }
+.cell[aria-current="true"] { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: .35rem .9rem; margin-top: .8rem; font-size: .68rem; color: var(--ink-faint); }
+.legend span { display: inline-flex; align-items: center; gap: .35rem; }
+.legend i { width: .8rem; height: .8rem; border-radius: 2px; border: 1px solid var(--rule); display: inline-block; }
+.legend .k-red     { background: var(--unsafe); border-color: var(--unsafe); }
+.legend .k-amber   { background: repeating-linear-gradient(-45deg, var(--caution-wash) 0 3px, var(--caution) 3px 5px); border-color: var(--caution); }
+.legend .k-green   { background: var(--safe-wash); border-color: var(--safe); }
+.legend .k-unknown { background: transparent; border-style: dashed; border-color: var(--unknown); }
+
+/* ── Sourcing ─────────────────────────────────────────────────────── */
+footer { font-size: .7rem; color: var(--ink-faint); line-height: 1.6; }
+footer p { margin: 0 0 .6rem; max-width: 62ch; }
+footer a { color: var(--accent); }
+footer .caveat { border-left: 2px solid var(--caution); padding-left: .7rem; color: var(--ink-soft); }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow label">Content check &middot; Nudity &amp; sex</div>
+    <h1>Safe for the Living Room?</h1>
+    <p>Check an episode before you press play. Verdicts are built from IMDb&rsquo;s community Parents Guide.</p>
+  </header>
+
+  <div class="picker">
+    <div class="field wide">
+      <label class="label" for="show">Show</label>
+      <select id="show"></select>
+    </div>
+    <div class="field">
+      <label class="label" for="season">Season</label>
+      <select id="season"></select>
+    </div>
+    <div class="field">
+      <label class="label" for="episode">Episode</label>
+      <select id="episode"></select>
+    </div>
+    <div class="field wide">
+      <label class="label" for="quick">Jump to &mdash; type s3e7, 3x07 or 307</label>
+      <input id="quick" type="text" autocomplete="off" spellcheck="false" placeholder="s3e7">
+    </div>
+  </div>
+
+  <section class="placard" id="placard" data-tier="unknown" aria-live="polite">
+    <div class="mark" id="mark"></div>
+    <p class="verdict" id="verdict">&mdash;</p>
+    <p class="tierline label" id="tierline"></p>
+    <div class="divider"></div>
+    <div class="epno label" id="epno"></div>
+    <div class="eptitle" id="eptitle"></div>
+    <div class="meta" id="epmeta"></div>
+    <p class="reason" id="reason"></p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2 class="label">What&rsquo;s in it</h2>
+      <span class="count" id="scount"></span>
+    </div>
+    <div id="detail"></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2 class="label">All episodes</h2>
+      <span class="count" id="gridnote"></span>
+    </div>
+    <div class="grid-scroll" id="grid"></div>
+    <div class="legend">
+      <span><i class="k-green"></i> Clean</span>
+      <span><i class="k-amber"></i> Brief / background</span>
+      <span><i class="k-red"></i> Explicit</span>
+      <span><i class="k-unknown"></i> No data</span>
+    </div>
+  </section>
+
+  <footer>
+    <p class="caveat">Nothing here replaces your own judgement. The Parents Guide is written by volunteers, so
+      coverage is uneven &mdash; an episode marked <strong>No data</strong> has simply never been described,
+      which is not the same as being clean. Treat those as unsafe.</p>
+    <p id="sourceline"></p>
+  </footer>
+</div>
+
+<script>
+window.__DATA__ = /*__DATA__*/ null;
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var DATA = window.__DATA__;
+  var shows = DATA.shows;
+
+  var TIERS = {
+    green:   { verdict: "Safe",     line: "No nudity or sex reported",        mark: "check" },
+    amber:   { verdict: "Careful",  line: "Brief or background nudity",       mark: "alert" },
+    red:     { verdict: "Not Safe", line: "Explicit sex or sustained nudity",  mark: "cross" },
+    unknown: { verdict: "Unknown",  line: "No data — assume unsafe",      mark: "query" }
+  };
+
+  var MARKS = {
+    check: '<path d="M5 13.5 10 18.5 19.5 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>',
+    cross: '<path d="M6 6 18 18M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>',
+    alert: '<path d="M12 4.5 22 20H2Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 10.2v4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.2" fill="currentColor"/>',
+    query: '<path d="M8.6 9a3.5 3.5 0 1 1 4.6 3.3c-.8.3-1.2 1-1.2 1.8v.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="18.4" r="1.3" fill="currentColor"/>'
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  var state = { show: shows[0], season: 1, episode: 1 };
+
+  function episodesIn(show, season) {
+    return show.episodes.filter(function (e) { return e.season === season; });
+  }
+  function find(show, season, episode) {
+    return show.episodes.find(function (e) { return e.season === season && e.episode === episode; }) || null;
+  }
+  function seasonsOf(show) {
+    return show.episodes.reduce(function (acc, e) {
+      if (acc.indexOf(e.season) === -1) acc.push(e.season);
+      return acc;
+    }, []).sort(function (a, b) { return a - b; });
+  }
+  function fill(select, values, current, labelFor) {
+    select.innerHTML = values.map(function (v) {
+      return '<option value="' + v + '"' + (v === current ? " selected" : "") + ">" + labelFor(v) + "</option>";
+    }).join("");
+  }
+
+  function renderPickers() {
+    fill($("show"), shows.map(function (s) { return s.slug; }), state.show.slug, function (slug) {
+      var s = shows.find(function (x) { return x.slug === slug; });
+      return esc(s.title) + " (" + esc(s.years) + ")";
+    });
+    fill($("season"), seasonsOf(state.show), state.season, function (n) { return "Season " + n; });
+    fill($("episode"), episodesIn(state.show, state.season).map(function (e) { return e.episode; }), state.episode,
+      function (n) {
+        var ep = find(state.show, state.season, n);
+        return "Ep " + n + " — " + esc(ep ? ep.title : "");
+      });
+  }
+
+  function renderPlacard(ep) {
+    var tier = ep ? ep.tier : "unknown";
+    var t = TIERS[tier];
+    $("placard").setAttribute("data-tier", tier);
+    $("mark").innerHTML = '<svg viewBox="0 0 24 24" role="img" aria-label="' + t.verdict + '">' + MARKS[t.mark] + "</svg>";
+    $("verdict").textContent = t.verdict;
+    $("tierline").textContent = t.line;
+
+    if (!ep) {
+      $("epno").textContent = "";
+      $("eptitle").textContent = "Episode not found";
+      $("epmeta").textContent = "";
+      $("reason").textContent = "";
+      return;
+    }
+    $("epno").textContent = "Season " + ep.season + " · Episode " + ep.episode;
+    $("eptitle").textContent = ep.title;
+
+    var bits = [];
+    if (ep.runtime) bits.push(ep.runtime + " min");
+    if (ep.airdate) bits.push(ep.airdate);
+    if (ep.imdbSeverity) bits.push("IMDb rates it " + ep.imdbSeverity);
+    $("epmeta").textContent = bits.join("  ·  ");
+    $("reason").textContent = ep.evidence
+      ? "Flagged on the phrase “" + ep.evidence + "” in the Parents Guide."
+      : (ep.reason || "");
+  }
+
+  function renderDetail(ep) {
+    var host = $("detail");
+    var scenes = (ep && ep.scenes) || [];
+    $("scount").textContent = scenes.length ? scenes.length + (scenes.length === 1 ? " entry" : " entries") : "";
+
+    if (!scenes.length) {
+      host.innerHTML = '<p class="empty">' + (!ep || ep.tier === "unknown"
+        ? "Nobody has described this episode’s content yet. Assume it is unsafe until you have checked it yourself."
+        : "No nudity or sex scenes are listed for this episode.") + "</p>";
+      return;
+    }
+
+    var items = scenes.map(function (s) {
+      var when = (s.timestamps && s.timestamps.length) ? s.timestamps.join(", ") : s.approx;
+      var stamp = when ? '<span class="stamp label">' + esc(when) + "</span>" : "";
+      return "<li>" + stamp + esc(s.description) + "</li>";
+    }).join("");
+
+    host.innerHTML =
+      '<div class="spoilers veil" id="veil" data-tier="' + esc(ep.tier) + '">' +
+        '<ul class="scenes">' + items + "</ul>" +
+        '<button type="button" class="reveal" id="revealBtn">' +
+          '<span class="big label">Tap to reveal</span>' +
+          '<span class="small">These descriptions contain plot spoilers</span>' +
+        "</button>" +
+      "</div>";
+
+    $("revealBtn").addEventListener("click", function () { $("veil").classList.add("open"); });
+  }
+
+  function renderGrid() {
+    var show = state.show;
+    var explicit = show.episodes.filter(function (e) { return e.tier === "red"; }).length;
+    $("gridnote").textContent = show.episodes.length + " episodes · " + explicit + " explicit";
+
+    $("grid").innerHTML = seasonsOf(show).map(function (season) {
+      var cells = episodesIn(show, season).map(function (e) {
+        var current = e.season === state.season && e.episode === state.episode;
+        return '<button type="button" class="cell" data-tier="' + esc(e.tier) + '"' +
+          (current ? ' aria-current="true"' : "") +
+          ' data-s="' + e.season + '" data-e="' + e.episode + '"' +
+          ' title="S' + e.season + "E" + e.episode + " — " + esc(e.title) + '">' + e.episode + "</button>";
+      }).join("");
+      return '<div class="season"><span class="sname label">S' + season + "</span>" +
+             '<div class="eps">' + cells + "</div></div>";
+    }).join("");
+
+    Array.prototype.forEach.call($("grid").querySelectorAll(".cell"), function (btn) {
+      btn.addEventListener("click", function () {
+        state.season = Number(btn.dataset.s);
+        state.episode = Number(btn.dataset.e);
+        render();
+      });
+    });
+  }
+
+  function renderFooter() {
+    var s = state.show;
+    $("sourceline").innerHTML =
+      'Source: <a href="https://www.imdb.com/title/' + esc(s.imdbId) + '/parentalguide/" target="_blank" rel="noopener">' +
+      esc(s.source) + "</a>, collected " + esc(s.fetchedAt) +
+      ". Scene descriptions are quoted from that guide. Titles and runtimes from TVmaze.";
+  }
+
+  function render() {
+    var ep = find(state.show, state.season, state.episode);
+    renderPickers();
+    renderPlacard(ep);
+    renderDetail(ep);
+    renderGrid();
+    renderFooter();
+  }
+
+  $("show").addEventListener("change", function (e) {
+    state.show = shows.find(function (s) { return s.slug === e.target.value; });
+    state.season = 1;
+    state.episode = 1;
+    render();
+  });
+  $("season").addEventListener("change", function (e) {
+    state.season = Number(e.target.value);
+    state.episode = 1;
+    render();
+  });
+  $("episode").addEventListener("change", function (e) {
+    state.episode = Number(e.target.value);
+    render();
+  });
+
+  // Accepts s3e7, S3E07, 3x07 and bare 307.
+  $("quick").addEventListener("input", function (e) {
+    var raw = e.target.value.toLowerCase().replace(/\s+/g, "");
+    var m = raw.match(/^s?(\d{1,2})[ex×](\d{1,2})$/) || raw.match(/^(\d)(\d{2})$/);
+    if (!m) return;
+    var season = Number(m[1]);
+    var episode = Number(m[2]);
+    if (find(state.show, season, episode)) {
+      state.season = season;
+      state.episode = episode;
+      render();
+    }
+  });
+
+  render();
+})();
+</script>

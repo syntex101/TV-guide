@@ -1,0 +1,13 @@
+{
+  "shows": [
+    {
+      "slug": "boardwalk-empire",
+      "title": "Boardwalk Empire",
+      "years": "2010–2014",
+      "network": "HBO",
+      "imdbId": "tt0979432",
+      "tvmazeQuery": "boardwalk empire",
+      "seasons": 5
+    }
+  ]
+}

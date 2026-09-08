@@ -1,0 +1,12 @@
+node_modules/
+
+# Generated: `npm run build` rebuilds both files from src/ and data/.
+dist/
+
+# Raw fetches are disposable — except the structured IMDb pulls and the
+# episode skeleton, which are the real sources the dataset is built from.
+# Note the `cache/*` form: a bare `cache/` would stop git descending into
+# the directory at all, and the negations below would never be seen.
+cache/*
+!cache/*-guides.json
+!cache/*-episodes.json
