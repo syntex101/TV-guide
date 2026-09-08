@@ -66,10 +66,24 @@ Or step by step:
 | `npm run build:data` | Parse and auto-classify → `data/<slug>.json` |
 | `npm run build` | Inline the data → `dist/` |
 
-Two outputs, one source (`src/index.html`):
+Three outputs, one source (`src/index.html`):
 
 - `dist/index.html` — standalone document, open it straight from disk
-- `dist/artifact.html` — same page without the document wrapper, for publishing
+- `dist/artifact.html` — same page without the document wrapper, for publishing as an Artifact
+- `docs/index.html` — identical to the first, but committed, because it is what GitHub Pages serves
+
+`dist/` is ignored; `docs/` is committed. Building on Actions would keep the
+built page out of the tree, but that needs a workflow file, and pushing one
+requires a token with the `workflow` scope.
+
+## Deployment
+
+Live at **https://syntex101.github.io/TV-guide/**, served from `main` at
+`/docs`. To update it: `npm run build`, then commit and push `docs/`.
+
+GitHub Pages does not work on a private repo without a paid plan, so this
+repository is public. Nothing in it is sensitive — no keys, and commits use
+the GitHub noreply address rather than a personal one.
 
 ## Classification
 
